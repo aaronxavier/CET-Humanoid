@@ -1,0 +1,17 @@
+function InverseKinematicsAll(to, Target)
+global uLINK
+lambda = 0.9;
+ForwardKinematics(1);
+idx = FindRoute(to);
+kp = 1;
+ki = 0.1;
+kd = 0;
+for n = 1:10
+  J   = CalcJacobian(idx);
+  err = CalcVWerr(Target, uLINK(to))
+  pid = kp*err + ki*error + kd*error;
+  if norm(pid) < 1E-6 break, end;
+  dq = lambda * (J \ err);
+  MoveJoints(idx, dq);
+  ForwardKinematics(1);
+end
